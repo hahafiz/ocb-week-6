@@ -84,6 +84,7 @@ const answerElements = [
 ];
 const feedback = document.getElementById("feedback");
 const startButton = document.getElementById("start-quiz");
+const scoreCurrent = document.getElementById("score");
 startButton.onclick = startQuiz;
 const nextButton = document.getElementById("next-question");
 const quizContainer = document.getElementById("quiz-container");
@@ -92,17 +93,20 @@ const finalScore = document.getElementById("final-score");
 // const restartButton = document.getElementById("restart-quiz");
 
 function startQuiz() {
-  startButton.classList.add("hide");
+  currentQID = 0; // reset score and current question index
+  score = 0;
+  scoreCurrent.innerText = "Score: 0"; // reset score display
+  startButton.classList.add("d-none");
   quizContainer.classList.remove("hide");
   finalScoreContainer.classList.add("hide");
-  currentQID = 0;
-  score = 0;
+  nextButton.innerText = "Next Question"; // reset next button CTA text
+  nextButton.onclick = nextQuestion;
   nextQuestion();
 }
 
 function nextQuestion() {
   feedback.innerText = ""; // Clear feedback
-  nextButton.classList.add("hide"); // Hide next button
+  nextButton.classList.add("d-none"); // Hide next button
   answerElements.forEach((btn) => (btn.disabled = false)); // Enable all answer buttons
   const currentQuestion = questionList[currentQID]; // Get current questions;
   const { id, question, answers, correctAnswer } = currentQuestion; // Destructure question data
@@ -135,7 +139,7 @@ function checkAnswer(index, answer, qid) {
   const currentQuestion = questionList[qid - 1];
   if (index == answer) {
     score += 10;
-    document.getElementById("score").innerText = "Score: " + score;
+    scoreCurrent.innerText = "Score: " + score;
     feedback.innerText = "Correct! Well done.";
   } else {
     feedback.innerText = `Wrong! The correct answer is ${currentQuestion.answers[answer]}`;
@@ -147,19 +151,18 @@ function checkAnswer(index, answer, qid) {
 const displayNextButton = () => {
   if (currentQID == questionList.length) {
     nextButton.innerText = "Finish Quiz";
-    nextButton.classList.remove("hide");
+    nextButton.classList.remove("d-none");
     nextButton.onclick = displayFinalScoreContainer;
     console.log(currentQID);
   } else {
-    nextButton.classList.remove("hide");
+    nextButton.classList.remove("d-none");
   }
 };
 
 const displayFinalScoreContainer = () => {
+  quizContainer.classList.add("hide");
   finalScoreContainer.classList.remove("hide");
   finalScore.innerText = "Score: " + score;
   startButton.innerText = "Restart Quiz";
-  startButton.classList.remove("hide");
+  startButton.classList.remove("d-none");
 };
-
-nextButton.addEventListener("click", nextQuestion);
